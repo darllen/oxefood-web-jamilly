@@ -1,11 +1,13 @@
 import React from "react";
 import InputMask from 'react-input-mask';
 import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
+import MenuSistema from '../../menuSistema';
 
 export default function FormCliente() {
 
     return (
         <div>
+            <MenuSistema />
             <div style={{ marginTop: '3%' }}>
                 <Container textAlign='justified' >
 
@@ -42,7 +44,7 @@ export default function FormCliente() {
                                     placeholder="Informe a descrição do produto">
                                 </Form.TextArea>
                             </Form.Group>
-                            
+
                             <Form.Group widths='equal' style={{ marginTop: '4%' }}>
                                 <Form.Input
                                     required

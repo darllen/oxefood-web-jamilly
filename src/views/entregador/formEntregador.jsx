@@ -1,6 +1,7 @@
 import React from "react";
 import InputMask from 'react-input-mask';
 import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
+import MenuSistema from '../../menuSistema';
 
 export default function FormCliente() {
     const UFOptions = [
@@ -35,6 +36,7 @@ export default function FormCliente() {
 
     return (
         <div>
+            <MenuSistema />
             <div style={{ marginTop: '3%' }}>
                 <Container textAlign='justified' >
 
