@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import InputMask from 'react-input-mask';
 import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
 import MenuSistema from '../../menuSistema';
+import axios from "axios";
 
-export default function FormCliente() {
+
+export default function FormEntregador() {
     const UFOptions = [
         { key: 'ac', value: 'ac', text: 'Acre' },
         { key: 'al', value: 'al', text: 'Alagoas' },
@@ -34,6 +36,52 @@ export default function FormCliente() {
         { key: 'to', value: 'to', text: 'Tocantins' }
     ];
 
+    const [nome, setNome] = useState();
+    const [cpf, setCpf] = useState();
+    const [rg, setRg] = useState();
+    const [dataNascimento, setDataNascimento] = useState();
+    const [foneCelular, setFoneCelular] = useState();
+    const [foneFixo, setFoneFixo] = useState();
+    const [qEntregasRealizadas, setQEntregasRealizadas] = useState();
+    const [valorPorFrete, setValorPorFrete] = useState();
+    const [rua, setRua] = useState();
+    const [bairro, setBairro] = useState();
+    const [cidade, setCidade] = useState();
+    const [cep, setCep] = useState();
+    const [uf, setUf] = useState();
+    const [complemento, setComplemento] = useState();
+    const [statusAtivo, setStatusAtivo] = useState();
+    const [numero, setNumero] = useState();
+
+    function salvar() {
+
+        let entregadorRequest = {
+            nome: nome,
+            cpf: cpf,
+            rg: rg,
+            dataNascimento: dataNascimento,
+            foneCelular: foneCelular,
+            foneFixo: foneFixo,
+            qEntregasRealizadas: qEntregasRealizadas,
+            valorPorFrete: valorPorFrete,
+            rua: rua,
+            bairro: bairro,
+            cidade: cidade,
+            cep: cep,
+            uf: uf,
+            complemento: complemento,
+            statusAtivo: statusAtivo,
+        }
+
+        axios.post("http://localhost:8080/api/entregador", entregadorRequest)
+            .then((response) => {
+                console.log('Entregador cadastrado com sucesso.')
+            })
+            .catch((error) => {
+                console.log('Erro ao incluir o um entregador.')
+            })
+    }
+
     return (
         <div>
             <MenuSistema />
@@ -52,6 +100,8 @@ export default function FormCliente() {
                                     fluid
                                     label='Nome'
                                     maxLength="100"
+                                    value={nome}
+                                    onChange={e => setNome(e.target.value)}
                                 />
                                 <Form.Input
                                     required
@@ -60,6 +110,8 @@ export default function FormCliente() {
                                     <InputMask
                                         required
                                         mask="999.999.999-99"
+                                        value={cpf}
+                                        onChange={e => setCpf(e.target.value)}
                                     />
                                 </Form.Input>
 
@@ -70,6 +122,8 @@ export default function FormCliente() {
                                     <InputMask
                                         required
                                         mask="9999999"
+                                        value={rg}
+                                        onChange={e => setRg(e.target.value)}
                                     />
                                 </Form.Input>
                             </Form.Group>
@@ -83,6 +137,8 @@ export default function FormCliente() {
                                         required
                                         mask="99/99/9999"
                                         placeholder="Ex: 20/03/1985"
+                                        value={dataNascimento}
+                                        onChange={e => setDataNascimento(e.target.value)}
                                     />
                                 </Form.Input>
                                 <Form.Input
@@ -92,6 +148,8 @@ export default function FormCliente() {
                                     width={30}>
                                     <InputMask
                                         mask="(99) 9999.9999"
+                                        value={foneCelular}
+                                        onChange={e => setFoneCelular(e.target.value)}
                                     />
                                 </Form.Input>
                                 <Form.Input
@@ -99,16 +157,22 @@ export default function FormCliente() {
                                     label='Fone fixo'
                                     maxLength="100"
                                     width={30}
+                                    value={foneFixo}
+                                    onChange={e => setFoneFixo(e.target.value)}
                                 />
                                 <Form.Input
                                     fluid
                                     label='QTD Entregas Realizadas'
+                                    value={qEntregasRealizadas}
+                                    onChange={e => setQEntregasRealizadas(e.target.value)}
 
                                 />
                                 <Form.Input
                                     fluid
                                     label='Valor Por Frete'
                                     maxLength="100"
+                                    value={valorPorFrete}
+                                    onChange={e => setValorPorFrete(e.target.value)}
                                 />
                             </Form.Group>
 
@@ -118,6 +182,8 @@ export default function FormCliente() {
                                     fluid
                                     label='Rua'
                                     maxLength="100"
+                                    value={rua}
+                                    onChange={e => setRua(e.target.value)}
                                 />
                                 <Form.Input
                                     required
@@ -125,6 +191,8 @@ export default function FormCliente() {
                                     label='Número'
                                     maxLength="100"
                                     width={4}
+                                    value={numero}
+                                    onChange={e => setNumero(e.target.value)}
                                 />
                             </Form.Group>
 
@@ -134,11 +202,15 @@ export default function FormCliente() {
                                     fluid
                                     label='Bairro'
                                     maxLength="100"
+                                    value={bairro}
+                                    onChange={e => setBairro(e.target.value)}
                                 />
                                 <Form.Input
                                     required
                                     fluid
                                     label='Cidade'
+                                    value={cidade}
+                                    onChange={e => setCidade(e.target.value)}
                                 />
                                 <Form.Input
                                     required
@@ -148,6 +220,8 @@ export default function FormCliente() {
                                     <InputMask
                                         required
                                         mask="99999-999"
+                                        value={cep}
+                                        onChange={e => setCep(e.target.value)}
                                     />
                                 </Form.Input>
                             </Form.Group>
@@ -158,23 +232,31 @@ export default function FormCliente() {
                                     label='UF'
                                     placeholder="Selecione"
                                     options={UFOptions}
+                                    value={uf}
+                                    onChange={e => setUf(e.target.value)}
                                 />
                             </Form.Group>
                             <Form.Group widths='equal' style={{ marginTop: '4%' }}>
                                 <Form.Input
                                     fluid
                                     label='Complemento'
+                                    value={complemento}
+                                    onChange={e => setComplemento(e.target.value)}
                                 />
                             </Form.Group>
-                            <Form.Group style={{ marginTop: '4%' , paddingLeft: '1%'}}>
+                            <Form.Group style={{ marginTop: '4%', paddingLeft: '1%' }}>
                                 <h5>Ativo:</h5>
                                 <Form.Radio
                                     fluid
                                     label='Sim'
+                                    value={statusAtivo}
+                                    onChange={e => setStatusAtivo(e.target.value)}
                                 />
                                 <Form.Radio
                                     fluid
                                     label='Não'
+                                    value={statusAtivo}
+                                    onChange={e => setStatusAtivo(e.target.value)}
                                 />
                             </Form.Group>
                         </Form>
@@ -199,6 +281,7 @@ export default function FormCliente() {
                                 labelPosition='left'
                                 color='blue'
                                 floated='right'
+                                onClick={() => salvar()}
                             >
                                 <Icon name='save' />
                                 Salvar
