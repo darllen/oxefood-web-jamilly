@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import InputMask from 'react-input-mask';
 import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
+import { Link } from "react-router-dom";
 import MenuSistema from '../../menuSistema';
 import axios from "axios";
 
@@ -120,6 +121,8 @@ export default function FormCliente() {
                             >
                                 <Icon name='reply' />
                                 Voltar
+                                <Link to={'/list-cliente'}>Voltar</Link>
+
                             </Button>
 
                             <Button
