@@ -18,17 +18,22 @@ export default function FormCliente() {
     const [foneFixo, setFoneFixo] = useState();
 
     useEffect(() => {
+
         if (state != null && state.id != null) {
+
             axios.get("http://localhost:8080/api/cliente/" + state.id)
+
                 .then((response) => {
+
                     setIdCliente(response.data.id)
                     setNome(response.data.nome)
                     setCpf(response.data.cpf)
-                    setDataNascimento(response.data.dataNascimento)
+                    setDataNascimento(formatarData(response.data.dataNascimento))
                     setFoneCelular(response.data.foneCelular)
                     setFoneFixo(response.data.foneFixo)
                 })
         }
+
     }, [state])
 
     function salvar() {
@@ -42,22 +47,38 @@ export default function FormCliente() {
         }
 
         if (idCliente != null) { //Alteração:
+
             axios.put("http://localhost:8080/api/cliente/" + idCliente, clienteRequest)
                 .then((response) => { console.log('Cliente alterado com sucesso.') })
                 .catch((error) => { console.log('Erro ao alter um cliente.') })
+
         } else { //Cadastro:
-            axios.post("http://localhost:8080/api/cliente/", clienteRequest)
+
+            axios.post("http://localhost:8080/api/cliente", clienteRequest)
                 .then((response) => { console.log('Cliente cadastrado com sucesso.') })
                 .catch((error) => { console.log('Erro ao incluir o cliente.') })
         }
 
     }
 
+    function formatarData(dataParam) {
+
+        if (dataParam === null || dataParam === '' || dataParam === undefined) {
+            return ''
+        }
+
+        let arrayData = dataParam.split('-');
+        return arrayData[2] + '/' + arrayData[1] + '/' + arrayData[0];
+    }
 
     return (
+
         <div>
+
             <MenuSistema />
+
             <div style={{ marginTop: '3%' }}>
+
                 <Container textAlign='justified' >
 
                     {idCliente === undefined &&
@@ -67,11 +88,15 @@ export default function FormCliente() {
                         <h2> <span style={{ color: 'darkgray' }}> Cliente &nbsp;<Icon name='angle double right' size="small" /> </span> Alteração</h2>
                     }
 
+
                     <Divider />
 
                     <div style={{ marginTop: '4%' }}>
+
                         <Form>
+
                             <Form.Group widths='equal'>
+
                                 <Form.Input
                                     required
                                     fluid
@@ -79,8 +104,8 @@ export default function FormCliente() {
                                     maxLength="100"
                                     value={nome}
                                     onChange={e => setNome(e.target.value)}
-
                                 />
+
                                 <Form.Input
                                     required
                                     fluid
@@ -90,12 +115,13 @@ export default function FormCliente() {
                                         mask="999.999.999-99"
                                         value={cpf}
                                         onChange={e => setCpf(e.target.value)}
-
                                     />
                                 </Form.Input>
+
                             </Form.Group>
 
                             <Form.Group>
+
                                 <Form.Input
                                     fluid
                                     label='Fone Celular'
@@ -104,9 +130,9 @@ export default function FormCliente() {
                                         mask="(99) 9999.9999"
                                         value={foneCelular}
                                         onChange={e => setFoneCelular(e.target.value)}
-
                                     />
                                 </Form.Input>
+
                                 <Form.Input
                                     fluid
                                     label='Fone Fixo'
@@ -115,9 +141,9 @@ export default function FormCliente() {
                                         mask="(99) 9999.9999"
                                         value={foneFixo}
                                         onChange={e => setFoneFixo(e.target.value)}
-
                                     />
                                 </Form.Input>
+
                                 <Form.Input
                                     fluid
                                     label='Data Nascimento'
@@ -129,13 +155,15 @@ export default function FormCliente() {
                                         placeholder="Ex: 20/03/1985"
                                         value={dataNascimento}
                                         onChange={e => setDataNascimento(e.target.value)}
-
                                     />
                                 </Form.Input>
+
                             </Form.Group>
+
                         </Form>
 
                         <div style={{ marginTop: '4%' }}>
+
                             <Button
                                 type="button"
                                 inverted
@@ -145,9 +173,7 @@ export default function FormCliente() {
                                 color='orange'
                             >
                                 <Icon name='reply' />
-                                Voltar
                                 <Link to={'/list-cliente'}>Voltar</Link>
-
                             </Button>
 
                             <Button
@@ -158,13 +184,15 @@ export default function FormCliente() {
                                 color='blue'
                                 floated='right'
                                 onClick={() => salvar()}
-
                             >
                                 <Icon name='save' />
                                 Salvar
                             </Button>
+
                         </div>
+
                     </div>
+
                 </Container>
             </div>
         </div>
