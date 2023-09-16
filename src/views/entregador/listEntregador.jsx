@@ -7,6 +7,8 @@ import MenuSistema from '../../menuSistema';
 
 export default function ListEntregador() {
 
+    const ENDERECO_API = 'http://localhost:8080/api/entregador/';
+
     const [lista, setLista] = useState([]);
 
     useEffect(() => {
@@ -15,7 +17,7 @@ export default function ListEntregador() {
 
     function carregarLista() {
 
-        axios.get("http://localhost:8080/api/entregador/")
+        axios.get(ENDERECO_API)
             .then((response) => {
                 setLista(response.data)
             })
@@ -27,8 +29,8 @@ export default function ListEntregador() {
             return ''
         }
 
-        let arrayDara = dataParam.split('-');
-        return arrayDara[2] + '/' + arrayDara[1] + '/' + arrayDara[0];
+        let arrayData = dataParam.split('-');
+        return arrayData[2] + '/' + arrayData[1] + '/' + arrayData[0];
 
     }
 
