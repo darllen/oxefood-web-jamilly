@@ -1,42 +1,45 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import InputMask from 'react-input-mask';
 import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import MenuSistema from '../../menuSistema';
 import axios from "axios";
 
+const UFOptions = [
+    { key: 'ac', value: 'ac', text: 'Acre' },
+    { key: 'al', value: 'al', text: 'Alagoas' },
+    { key: 'ap', value: 'ap', text: 'Amapá' },
+    { key: 'am', value: 'am', text: 'Amazonas' },
+    { key: 'ba', value: 'ba', text: 'Bahia' },
+    { key: 'ce', value: 'ce', text: 'Ceará' },
+    { key: 'df', value: 'df', text: 'Distrito Federal' },
+    { key: 'es', value: 'es', text: 'Espírito Santo' },
+    { key: 'go', value: 'go', text: 'Goiás' },
+    { key: 'ma', value: 'ma', text: 'Maranhão' },
+    { key: 'mt', value: 'mt', text: 'Mato Grosso' },
+    { key: 'ms', value: 'ms', text: 'Mato Grosso do Sul' },
+    { key: 'mg', value: 'mg', text: 'Minas Gerais' },
+    { key: 'pa', value: 'pa', text: 'Pará' },
+    { key: 'pb', value: 'pb', text: 'Paraíba' },
+    { key: 'pr', value: 'pr', text: 'Paraná' },
+    { key: 'pe', value: 'pe', text: 'Pernambuco' },
+    { key: 'pi', value: 'pi', text: 'Piauí' },
+    { key: 'rj', value: 'rj', text: 'Rio de Janeiro' },
+    { key: 'rn', value: 'rn', text: 'Rio Grande do Norte' },
+    { key: 'rs', value: 'rs', text: 'Rio Grande do Sul' },
+    { key: 'ro', value: 'ro', text: 'Rondônia' },
+    { key: 'rr', value: 'rr', text: 'Roraima' },
+    { key: 'sc', value: 'sc', text: 'Santa Catarina' },
+    { key: 'sp', value: 'sp', text: 'São Paulo' },
+    { key: 'se', value: 'se', text: 'Sergipe' },
+    { key: 'to', value: 'to', text: 'Tocantins' }
+];
+
 
 export default function FormEntregador() {
-    const UFOptions = [
-        { key: 'ac', value: 'ac', text: 'Acre' },
-        { key: 'al', value: 'al', text: 'Alagoas' },
-        { key: 'ap', value: 'ap', text: 'Amapá' },
-        { key: 'am', value: 'am', text: 'Amazonas' },
-        { key: 'ba', value: 'ba', text: 'Bahia' },
-        { key: 'ce', value: 'ce', text: 'Ceará' },
-        { key: 'df', value: 'df', text: 'Distrito Federal' },
-        { key: 'es', value: 'es', text: 'Espírito Santo' },
-        { key: 'go', value: 'go', text: 'Goiás' },
-        { key: 'ma', value: 'ma', text: 'Maranhão' },
-        { key: 'mt', value: 'mt', text: 'Mato Grosso' },
-        { key: 'ms', value: 'ms', text: 'Mato Grosso do Sul' },
-        { key: 'mg', value: 'mg', text: 'Minas Gerais' },
-        { key: 'pa', value: 'pa', text: 'Pará' },
-        { key: 'pb', value: 'pb', text: 'Paraíba' },
-        { key: 'pr', value: 'pr', text: 'Paraná' },
-        { key: 'pe', value: 'pe', text: 'Pernambuco' },
-        { key: 'pi', value: 'pi', text: 'Piauí' },
-        { key: 'rj', value: 'rj', text: 'Rio de Janeiro' },
-        { key: 'rn', value: 'rn', text: 'Rio Grande do Norte' },
-        { key: 'rs', value: 'rs', text: 'Rio Grande do Sul' },
-        { key: 'ro', value: 'ro', text: 'Rondônia' },
-        { key: 'rr', value: 'rr', text: 'Roraima' },
-        { key: 'sc', value: 'sc', text: 'Santa Catarina' },
-        { key: 'sp', value: 'sp', text: 'São Paulo' },
-        { key: 'se', value: 'se', text: 'Sergipe' },
-        { key: 'to', value: 'to', text: 'Tocantins' }
-    ];
 
+
+    const [idEntregador, setIdEntregador] = useState();
     const [nome, setNome] = useState();
     const [cpf, setCpf] = useState();
     const [rg, setRg] = useState();
@@ -53,6 +56,39 @@ export default function FormEntregador() {
     const [complemento, setComplemento] = useState();
     const [statusAtivo, setStatusAtivo] = useState();
     const [numero, setNumero] = useState();
+
+
+    const { state } = useLocation();
+
+    useEffect(() => {
+
+        if (state != null && state.id != null) {
+
+            axios.get("http://localhost:8080/api/entregador/" + state.id)
+
+                .then((response) => {
+
+                    setIdEntregador(response.data.id)
+                    setNome(response.data.nome)
+                    setCpf(response.data.cpf)
+                    setRg(response.data.rg)
+                    setDataNascimento(formatarData(response.data.dataNascimento))
+                    setFoneCelular(response.data.foneCelular)
+                    setFoneFixo(response.data.foneFixo)
+                    setQEntregasRealizadas(response.data.qEntregasRealizadas)
+                    setValorPorFrete(response.data.valorPorFrete)
+                    setRua(response.data.rua)
+                    setBairro(response.data.bairro)
+                    setCidade(response.data.cidade)
+                    setCep(response.data.cep)
+                    setUf(response.data.uf)
+                    setComplemento(response.data.complemento)
+                    setStatusAtivo(response.data.statusAtivo)
+                    setNumero(response.data.numero)
+                })
+        }
+
+    }, [state])
 
     function salvar() {
 
@@ -72,15 +108,32 @@ export default function FormEntregador() {
             uf: uf,
             complemento: complemento,
             statusAtivo: statusAtivo,
+            numero: numero,
         }
 
-        axios.post("http://localhost:8080/api/entregador", entregadorRequest)
-            .then((response) => {
-                console.log('Entregador cadastrado com sucesso.')
-            })
-            .catch((error) => {
-                console.log('Erro ao incluir o um entregador.')
-            })
+        if (idEntregador != null) { //Alteração:
+
+            axios.put("http://localhost:8080/api/entregador/" + idEntregador, entregadorRequest)
+                .then((response) => { console.log('Entregador alterado com sucesso.') })
+                .catch((error) => { console.log('Erro ao alter um entregador.') })
+
+        } else { //Cadastro:
+
+            axios.post("http://localhost:8080/api/entregador", entregadorRequest)
+                .then((response) => { console.log('Entregador cadastrado com sucesso.') })
+                .catch((error) => { console.log('Erro ao incluir o entregador.') })
+        }
+
+    }
+
+    function formatarData(dataParam) {
+
+        if (dataParam === null || dataParam === '' || dataParam === undefined) {
+            return ''
+        }
+
+        let arrayData = dataParam.split('-');
+        return arrayData[2] + '/' + arrayData[1] + '/' + arrayData[0];
     }
 
     return (
@@ -89,7 +142,14 @@ export default function FormEntregador() {
             <div style={{ marginTop: '3%' }}>
                 <Container textAlign='justified' >
 
-                    <h2> <span style={{ color: 'darkgray' }}> Entregador &nbsp;<Icon name='angle double right' size="small" /> </span> Cadastro </h2>
+                    {idEntregador === undefined &&
+                        <h2> <span style={{ color: 'darkgray' }}> Entregador &nbsp;<Icon name='angle double right' size="small" /> </span> Cadastro</h2>
+                    }
+                    {idEntregador !== undefined &&
+                        <h2> <span style={{ color: 'darkgray' }}> Entregador &nbsp;<Icon name='angle double right' size="small" /> </span> Alteração</h2>
+                    }
+
+
 
                     <Divider />
 
@@ -234,7 +294,8 @@ export default function FormEntregador() {
                                     placeholder="Selecione"
                                     options={UFOptions}
                                     value={uf}
-                                    onChange={e => setUf(e.target.value)}
+                                    //onChange={e => setUf(e.target.value)}
+                                    onChange={(e, { value }) => { setUf(value) }}
                                 />
                             </Form.Group>
                             <Form.Group widths='equal' style={{ marginTop: '4%' }}>
