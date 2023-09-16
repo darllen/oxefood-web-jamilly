@@ -1,17 +1,39 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import InputMask from 'react-input-mask';
 import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
+import { Link, useLocation } from "react-router-dom";
 import MenuSistema from '../../menuSistema';
 import axios from "axios";
 
-
 export default function FormProduto() {
 
+    const ENDERECO_API = 'http://localhost:8080/api/produto';
+
+    const { state } = useLocation();
+
+    const [idProduto, setIdProduto] = useState();
     const [titulo, setTitulo] = useState();
     const [codigo, setCodigo] = useState();
     const [descricao, setDescricao] = useState();
     const [valorUnitario, setValorUnitario] = useState();
     const [tempoEntregaMin, setTempoEntregaMin] = useState();
     const [tempoEntregaMax, setTempoEntregaMax] = useState();
+
+    useEffect(() => {
+        if (state != null && state.id != null) {
+            axios.get(ENDERECO_API + state.id)
+                .then((response) => {
+                    setIdProduto(response.data.id)
+                    setTitulo(response.data.titulo)
+                    setCodigo(response.data.codigo)
+                    setDescricao(response.data.descricao)
+                    setValorUnitario(formatarMoeda(response.data.valorUnitario))
+                    setTempoEntregaMin(response.data.tempoEntregaMin)
+                    setTempoEntregaMax(response.data.tempoEntregaMax)
+                })
+        }
+    }, [state])
+
 
     function salvar() {
 
@@ -24,7 +46,19 @@ export default function FormProduto() {
             tempoEntregaMax: tempoEntregaMax
         }
 
-        axios.post("http://localhost:8080/api/produto", produtoRequest)
+        if (idProduto != null) { //Alteração:
+
+            axios.put(ENDERECO_API + idProduto, produtoRequest)
+                .then((response) => { console.log('produto alterado com sucesso.') })
+                .catch((error) => { console.log('Erro ao alter um produto.') })
+
+        } else { //Cadastro:
+
+            axios.post(ENDERECO_API, produtoRequest)
+                .then((response) => { console.log('produto cadastrado com sucesso.') })
+                .catch((error) => { console.log('Erro ao incluir o produto.') })
+        }
+        axios.post(ENDERECO_API, produtoRequest)
             .then((response) => {
                 console.log('Produto cadastrado com sucesso.')
             })
@@ -33,11 +67,18 @@ export default function FormProduto() {
             })
     }
 
+    function formatarMoeda(dataParam) {
+        if (dataParam === null || dataParam === '' || dataParam === undefined || dataParam === 0) { return '' }
+
+        return dataParam.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
 
     return (
         <div>
             <MenuSistema />
             <div style={{ marginTop: '3%' }}>
+
                 <Container textAlign='justified' >
 
                     <h2> <span style={{ color: 'darkgray' }}> Produto &nbsp;<Icon name='angle double right' size="small" /> </span> Cadastro </h2>
