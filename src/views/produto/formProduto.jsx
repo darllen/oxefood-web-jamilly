@@ -6,7 +6,7 @@ import axios from "axios";
 
 export default function FormProduto() {
 
-    const ENDERECO_API = 'http://localhost:8080/api/produto';
+    const ENDERECO_API = 'http://localhost:8080/api/produto/';
 
     const { state } = useLocation();
 
@@ -19,7 +19,7 @@ export default function FormProduto() {
     const [tempoEntregaMax, setTempoEntregaMax] = useState();
 
     useEffect(() => {
-        if (state != null && state.id != null) {
+        if (state !== null && state.id !== null) {
             
             axios.get(ENDERECO_API + state.id)
                 .then((response) => {
@@ -27,7 +27,7 @@ export default function FormProduto() {
                     setTitulo(response.data.titulo)
                     setCodigo(response.data.codigo)
                     setDescricao(response.data.descricao)
-                    setValorUnitario(formatarMoeda(response.data.valorUnitario))
+                    setValorUnitario(response.data.valorUnitario)
                     setTempoEntregaMin(response.data.tempoEntregaMin)
                     setTempoEntregaMax(response.data.tempoEntregaMax)
                 })
@@ -46,22 +46,19 @@ export default function FormProduto() {
             tempoEntregaMax: tempoEntregaMax
         }
 
-        if (idProduto = ! null) {
-            axios.put(ENDERECO_API + idProduto, produtoRequest)
-                .then((response) => { console.log('produto alterado com sucesso.') })
-                .catch((error) => { console.log('Erro ao alter um produto.') })
-        } else {
+        if (idProduto === undefined) { //Cadastro:
+
             axios.post(ENDERECO_API, produtoRequest)
-                .then((response) => { console.log('produto cadastrado com sucesso.') })
+                .then((response) => { console.log('Produto cadastrado com sucesso.') })
                 .catch((error) => { console.log('Erro ao incluir o produto.') })
+
+        } else { //Alteração:
+            axios.put(ENDERECO_API + idProduto, produtoRequest)
+            .then((response) => { console.log('Produto alterado com sucesso.') })
+            .catch((error) => { console.log('Erro ao alterar um produto.') })
+            
         }
 
-    }
-
-    function formatarMoeda(dataParam) {
-        if (dataParam === null || dataParam === '' || dataParam === undefined || dataParam === 0) { return '' }
-
-        return dataParam.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
 
@@ -170,7 +167,8 @@ export default function FormProduto() {
                                 color='blue'
                                 floated='right'
                                 onClick={() => salvar()} >
-                                <Icon name='save' /> Salvar
+                                <Icon name='save' /> 
+                                <Link to={'/list-produto'}>Salvar</Link>
                             </Button>
                         </div>
                     </div>
