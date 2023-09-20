@@ -346,7 +346,7 @@ export default function FormEntregador() {
                                 onClick={() => salvar()}
                             >
                                 <Icon name='save' />
-                                Salvar
+                                <Link to={'/list-entregador'}>Salvar</Link>
                             </Button>
                         </div>
                     </div>

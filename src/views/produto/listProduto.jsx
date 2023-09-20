@@ -53,6 +53,7 @@ export default function ListProduto() {
             })
         setOpenModal(false)
     }
+    
     return (
         <div>
             <MenuSistema />

@@ -185,7 +185,7 @@ export default function FormCliente() {
                                 onClick={() => salvar()}
                             >
                                 <Icon name='save' />
-                                Salvar
+                                <Link to={'/list-cliente'}>Salvar</Link>
                             </Button>
 
                         </div>
