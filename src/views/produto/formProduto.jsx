@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import InputMask from 'react-input-mask';
 import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
 import { Link, useLocation } from "react-router-dom";
 import MenuSistema from '../../menuSistema';
@@ -21,6 +20,7 @@ export default function FormProduto() {
 
     useEffect(() => {
         if (state != null && state.id != null) {
+            
             axios.get(ENDERECO_API + state.id)
                 .then((response) => {
                     setIdProduto(response.data.id)
@@ -46,25 +46,16 @@ export default function FormProduto() {
             tempoEntregaMax: tempoEntregaMax
         }
 
-        if (idProduto != null) { //Alteração:
-
+        if (idProduto = ! null) {
             axios.put(ENDERECO_API + idProduto, produtoRequest)
                 .then((response) => { console.log('produto alterado com sucesso.') })
                 .catch((error) => { console.log('Erro ao alter um produto.') })
-
-        } else { //Cadastro:
-
+        } else {
             axios.post(ENDERECO_API, produtoRequest)
                 .then((response) => { console.log('produto cadastrado com sucesso.') })
                 .catch((error) => { console.log('Erro ao incluir o produto.') })
         }
-        axios.post(ENDERECO_API, produtoRequest)
-            .then((response) => {
-                console.log('Produto cadastrado com sucesso.')
-            })
-            .catch((error) => {
-                console.log('Erro ao incluir o um produto.')
-            })
+
     }
 
     function formatarMoeda(dataParam) {
@@ -81,7 +72,14 @@ export default function FormProduto() {
 
                 <Container textAlign='justified' >
 
-                    <h2> <span style={{ color: 'darkgray' }}> Produto &nbsp;<Icon name='angle double right' size="small" /> </span> Cadastro </h2>
+
+                    {idProduto === undefined &&
+                        <h2> <span style={{ color: 'darkgray' }}> Produto &nbsp;<Icon name='angle double right' size="small" /> </span> Cadastro</h2>
+                    }
+                    {idProduto !== undefined &&
+                        <h2> <span style={{ color: 'darkgray' }}> Produto &nbsp;<Icon name='angle double right' size="small" /> </span> Alteração</h2>
+                    }
+
 
                     <Divider />
 
@@ -161,7 +159,7 @@ export default function FormProduto() {
                                 color='orange'
                             >
                                 <Icon name='reply' />
-                                Voltar
+                                <Link to={'/list-produto'}>Voltar</Link>
                             </Button>
 
                             <Button
@@ -171,10 +169,8 @@ export default function FormProduto() {
                                 labelPosition='left'
                                 color='blue'
                                 floated='right'
-                                onClick={() => salvar()}
-                            >
-                                <Icon name='save' />
-                                Salvar
+                                onClick={() => salvar()} >
+                                <Icon name='save' /> Salvar
                             </Button>
                         </div>
                     </div>
