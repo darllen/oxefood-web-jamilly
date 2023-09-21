@@ -80,6 +80,7 @@ export default function ListProduto() {
                             <Table.Header>
                                 <Table.Row>
                                     <Table.HeaderCell>Código</Table.HeaderCell>
+                                    <Table.HeaderCell>Categoria</Table.HeaderCell>
                                     <Table.HeaderCell>Produto</Table.HeaderCell>
                                     <Table.HeaderCell>Valor Unid.</Table.HeaderCell>
                                     <Table.HeaderCell>Entrega Min</Table.HeaderCell>
@@ -94,6 +95,7 @@ export default function ListProduto() {
 
                                     <Table.Row key={produto.id}>
                                         <Table.Cell>{produto.codigo}</Table.Cell>
+                                        <Table.Cell>{produto.categoria.descricao}</Table.Cell>
                                         <Table.Cell>{produto.titulo}</Table.Cell>
                                         <Table.Cell>{formatarMoeda(produto.valorUnitario)}</Table.Cell>
                                         <Table.Cell>{produto.tempoEntregaMin}</Table.Cell>
