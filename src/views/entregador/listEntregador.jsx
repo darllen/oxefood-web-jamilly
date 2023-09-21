@@ -28,13 +28,14 @@ export default function ListEntregador() {
 
     function formatarData(dataParam) {
 
+        const data = dataParam.toString();
+
         if (dataParam === null || dataParam === '' || dataParam === undefined) {
             return ''
         }
 
-        let arrayData = dataParam.split('-');
+        let arrayData = data.split(',');
         return arrayData[2] + '/' + arrayData[1] + '/' + arrayData[0];
-
     }
 
     function confirmaRemover(id) {

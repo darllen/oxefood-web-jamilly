@@ -25,9 +25,13 @@ export default function ListCliente() {
     }
 
     function formatarData(dataParam) {
-        if (dataParam === null || dataParam === '' || dataParam === undefined) { return '' }
+        const data = dataParam.toString();
 
-        let arrayData = dataParam.split('-');
+        if (dataParam === null || dataParam === '' || dataParam === undefined) {
+            return ''
+        }
+
+        let arrayData = data.split(',');
         return arrayData[2] + '/' + arrayData[1] + '/' + arrayData[0];
     }
 
