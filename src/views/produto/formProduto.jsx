@@ -17,10 +17,13 @@ export default function FormProduto() {
     const [valorUnitario, setValorUnitario] = useState();
     const [tempoEntregaMin, setTempoEntregaMin] = useState();
     const [tempoEntregaMax, setTempoEntregaMax] = useState();
+    const [listaCategoria, setListaCategoria] = useState([]);
+    const [idCategoria, setIdCategoria] = useState();
+
 
     useEffect(() => {
         if (state !== null && state.id !== null) {
-            
+
             axios.get(ENDERECO_API + state.id)
                 .then((response) => {
                     setIdProduto(response.data.id)
@@ -30,14 +33,23 @@ export default function FormProduto() {
                     setValorUnitario(response.data.valorUnitario)
                     setTempoEntregaMin(response.data.tempoEntregaMin)
                     setTempoEntregaMax(response.data.tempoEntregaMax)
+                    setIdCategoria(response.data.categoria.id)
                 })
         }
+
+        axios.get(ENDERECO_API + "categoria/")
+            .then((response) => {
+                const dropDownCategorias = response.data.map(c => ({ text: c.descricao, value: c.id }));
+                setListaCategoria(dropDownCategorias);
+            })
+
     }, [state])
 
 
     function salvar() {
 
         let produtoRequest = {
+            idCategoria: idCategoria,
             titulo: titulo,
             codigo: codigo,
             descricao: descricao,
@@ -54,9 +66,9 @@ export default function FormProduto() {
 
         } else { //Alteração:
             axios.put(ENDERECO_API + idProduto, produtoRequest)
-            .then((response) => { console.log('Produto alterado com sucesso.') })
-            .catch((error) => { console.log('Erro ao alterar um produto.') })
-            
+                .then((response) => { console.log('Produto alterado com sucesso.') })
+                .catch((error) => { console.log('Erro ao alterar um produto.') })
+
         }
 
     }
@@ -102,7 +114,21 @@ export default function FormProduto() {
                                     onChange={e => setCodigo(e.target.value)}>
                                 </Form.Input>
                             </Form.Group>
+                            <Form.Group widths='equal' style={{ marginTop: '4%' }}>
+                                <Form.Select
+                                    required
+                                    fluid
+                                    tabIndex='3'
+                                    placeholder='Selecione'
+                                    label='Categoria'
+                                    options={listaCategoria}
+                                    value={idCategoria}
+                                    onChange={(e, { value }) => {
+                                        setIdCategoria(value)
+                                    }}
+                                />
 
+                            </Form.Group>
                             <Form.Group widths='equal' style={{ marginTop: '4%' }}>
                                 <Form.TextArea
                                     required
@@ -167,7 +193,7 @@ export default function FormProduto() {
                                 color='blue'
                                 floated='right'
                                 onClick={() => salvar()} >
-                                <Icon name='save' /> 
+                                <Icon name='save' />
                                 <Link to={'/list-produto'}>Salvar</Link>
                             </Button>
                         </div>

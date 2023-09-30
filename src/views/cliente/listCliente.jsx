@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, Container, Divider, Icon, Table, Modal, Header } from 'semantic-ui-react';
+import { Button, Container, Divider, Header, Icon, Modal, Table } from 'semantic-ui-react';
 import MenuSistema from '../../menuSistema';
 
 export default function ListCliente() {
@@ -25,9 +25,13 @@ export default function ListCliente() {
     }
 
     function formatarData(dataParam) {
-        if (dataParam === null || dataParam === '' || dataParam === undefined) { return '' }
+        const data = dataParam.toString();
 
-        let arrayData = dataParam.split('-');
+        if (dataParam === null || dataParam === '' || dataParam === undefined) {
+            return ''
+        }
+
+        let arrayData = data.split('-');
         return arrayData[2] + '/' + arrayData[1] + '/' + arrayData[0];
     }
 
@@ -86,6 +90,7 @@ export default function ListCliente() {
                                     <Table.HeaderCell>Data de Nascimento</Table.HeaderCell>
                                     <Table.HeaderCell>Fone Celular</Table.HeaderCell>
                                     <Table.HeaderCell>Fone Fixo</Table.HeaderCell>
+                                    <Table.HeaderCell>Cidade</Table.HeaderCell>
                                     <Table.HeaderCell textAlign='center'>Ações</Table.HeaderCell>
                                 </Table.Row>
                             </Table.Header>
@@ -100,6 +105,7 @@ export default function ListCliente() {
                                         <Table.Cell>{formatarData(cliente.dataNascimento)}</Table.Cell>
                                         <Table.Cell>{cliente.foneCelular}</Table.Cell>
                                         <Table.Cell>{cliente.foneFixo}</Table.Cell>
+                                        <Table.Cell>{cliente.enderecos[0].cidade}</Table.Cell>
                                         <Table.Cell textAlign='center'>
 
                                             <Button
