@@ -1,10 +1,10 @@
+import { mensagemErro, notifyError, notifySuccess } from '../../views/util/Util';
 import React, { useEffect, useState } from "react";
 import InputMask from 'react-input-mask';
 import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
 import { Link, useLocation } from "react-router-dom";
 import MenuSistema from '../../menuSistema';
 import axios from "axios";
-import { mensagemErro, notifyError, notifySuccess } from '../../views/util/Util';
 
 
 
@@ -28,7 +28,6 @@ export default function FormCliente() {
             axios.get(ENDERECO_API + state.id)
 
                 .then((response) => {
-
                     setIdCliente(response.data.id)
                     setNome(response.data.nome)
                     setCpf(response.data.cpf)
