@@ -89,7 +89,6 @@ export default function ListCliente() {
                                     <Table.HeaderCell>Data de Nascimento</Table.HeaderCell>
                                     <Table.HeaderCell>Fone Celular</Table.HeaderCell>
                                     <Table.HeaderCell>Fone Fixo</Table.HeaderCell>
-                                    <Table.HeaderCell>Cidade</Table.HeaderCell>
                                     <Table.HeaderCell textAlign='center'>Ações</Table.HeaderCell>
                                 </Table.Row>
                             </Table.Header>
@@ -104,7 +103,6 @@ export default function ListCliente() {
                                         <Table.Cell>{formatarData(cliente.dataNascimento)}</Table.Cell>
                                         <Table.Cell>{cliente.foneCelular}</Table.Cell>
                                         <Table.Cell>{cliente.foneFixo}</Table.Cell>
-                                        {/* <Table.Cell>{cliente.enderecos[0].cidade}</Table.Cell> */}
                                         <Table.Cell textAlign='center'>
 
                                             <Button

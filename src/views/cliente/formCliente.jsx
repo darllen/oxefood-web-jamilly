@@ -16,14 +16,6 @@ export default function FormCliente() {
     const [dataNascimento, setDataNascimento] = useState();
     const [foneCelular, setFoneCelular] = useState();
     const [foneFixo, setFoneFixo] = useState();
-    const [rua, setRua] = useState();
-    const [bairro, setBairro] = useState();
-    const [cidade, setCidade] = useState();
-    const [cep, setCep] = useState();
-    const [estado, setEstado] = useState();
-    const [complemento, setComplemento] = useState();
-    const [numero, setNumero] = useState();
-    //const [enderecos, setEnderecos] = useState();
 
     const { state } = useLocation();
 
@@ -41,15 +33,6 @@ export default function FormCliente() {
                     setDataNascimento(formatarData(response.data.dataNascimento))
                     setFoneCelular(response.data.foneCelular)
                     setFoneFixo(response.data.foneFixo)
-                    setRua(response.data.enderecos[0].rua)
-                    setBairro(response.data.enderecos[0].bairro)
-                    setCidade(response.data.enderecos[0].cidade)
-                    setCep(response.data.enderecos[0].cep)
-                    setEstado(response.data.enderecos[0].estado)
-                    setComplemento(response.data.enderecos[0].complemento)
-                    setNumero(response.data.enderecos[0].numero)
-
-                    console.log(response.data.enderecos[0].rua);
                 })
         }
 
@@ -62,18 +45,7 @@ export default function FormCliente() {
             cpf: cpf,
             dataNascimento: dataNascimento,
             foneCelular: foneCelular,
-            foneFixo: foneFixo,
-            enderecos: [
-                {
-                    rua: rua,
-                    bairro: bairro,
-                    cidade: cidade,
-                    cep: cep,
-                    estado: estado,
-                    complemento: complemento,
-                    numero: numero,
-                }
-            ]
+            foneFixo: foneFixo
         }
 
         if (idCliente != null) { //Alteração:
@@ -183,8 +155,8 @@ export default function FormCliente() {
                                     fluid
                                     label='Rua'
                                     maxLength="100"
-                                    value={rua}
-                                    onChange={e => setRua(e.target.value)}
+                                    /* value={rua}
+                                    onChange={e => setRua(e.target.value)} */
                                 />
                                 <Form.Input
                                     required
@@ -192,8 +164,8 @@ export default function FormCliente() {
                                     label='Número'
                                     maxLength="100"
                                     width={4}
-                                    value={numero}
-                                    onChange={e => setNumero(e.target.value)}
+                                    /* value={numero}
+                                    onChange={e => setNumero(e.target.value)} */
                                 />
                             </Form.Group>
 
@@ -203,15 +175,15 @@ export default function FormCliente() {
                                     fluid
                                     label='Bairro'
                                     maxLength="100"
-                                    value={bairro}
-                                    onChange={e => setBairro(e.target.value)}
+                                    /* value={bairro}
+                                    onChange={e => setBairro(e.target.value)} */
                                 />
                                 <Form.Input
                                     required
                                     fluid
                                     label='Cidade'
-                                    value={cidade}
-                                    onChange={e => setCidade(e.target.value)}
+                                    /* value={cidade}
+                                    onChange={e => setCidade(e.target.value)} */
                                 />
                                 <Form.Input
                                     required
@@ -221,8 +193,8 @@ export default function FormCliente() {
                                     <InputMask
                                         required
                                         mask="99999-999"
-                                        value={cep}
-                                        onChange={e => setCep(e.target.value)}
+                                        /* value={cep}
+                                        onChange={e => setCep(e.target.value)} */
                                     />
                                 </Form.Input>
                             </Form.Group>
@@ -233,17 +205,17 @@ export default function FormCliente() {
                                     label='UF'
                                     placeholder="Selecione"
                                     options={UFOptions}
-                                    value={estado}
+                                    /* value={estado}
                                     //onChange={e => setUf(e.target.value)}
-                                    onChange={(e, { value }) => { setEstado(value) }}
+                                    onChange={(e, { value }) => { setEstado(value) }} */
                                 />
                             </Form.Group>
                             <Form.Group widths='equal' style={{ marginTop: '4%' }}>
                                 <Form.Input
                                     fluid
                                     label='Complemento'
-                                    value={complemento}
-                                    onChange={e => setComplemento(e.target.value)}
+                                    /* value={complemento}
+                                    onChange={e => setComplemento(e.target.value)} */
                                 />
                             </Form.Group>
 
