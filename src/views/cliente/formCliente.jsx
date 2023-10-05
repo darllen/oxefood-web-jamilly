@@ -4,6 +4,8 @@ import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
 import { Link, useLocation } from "react-router-dom";
 import MenuSistema from '../../menuSistema';
 import axios from "axios";
+import { mensagemErro, notifyError, notifySuccess } from '../../views/util/Util';
+
 
 
 export default function FormCliente() {
@@ -51,14 +53,28 @@ export default function FormCliente() {
         if (idCliente != null) { //Alteração:
 
             axios.put(ENDERECO_API + idCliente, clienteRequest)
-                .then((response) => { console.log('Cliente alterado com sucesso.') })
-                .catch((error) => { console.log('Erro ao alter um cliente.') })
+                .then((response) => { notifySuccess('Cliente alterado com sucesso.') })
+                .catch((error) => {
+                    if (error.response) {
+                        notifyError(error.response.data.errors[0].defaultMessage)
+                    } else {
+                        notifyError(mensagemErro)
+                    }
+                })
 
         } else { //Cadastro:
 
             axios.post(ENDERECO_API, clienteRequest)
-                .then((response) => { console.log('Cliente cadastrado com sucesso.') })
-                .catch((error) => { console.log('Erro ao incluir o cliente.') })
+                .then((response) => {
+                    notifySuccess('Cliente cadastrado com sucesso.')
+                })
+                .catch((error) => {
+                    if (error.response) {
+                        notifyError(error.response.data.errors[0].defaultMessage)
+                    } else {
+                        notifyError(mensagemErro)
+                    }
+                })
         }
 
     }
@@ -155,8 +171,8 @@ export default function FormCliente() {
                                     fluid
                                     label='Rua'
                                     maxLength="100"
-                                    /* value={rua}
-                                    onChange={e => setRua(e.target.value)} */
+                                /* value={rua}
+                                onChange={e => setRua(e.target.value)} */
                                 />
                                 <Form.Input
                                     required
@@ -164,8 +180,8 @@ export default function FormCliente() {
                                     label='Número'
                                     maxLength="100"
                                     width={4}
-                                    /* value={numero}
-                                    onChange={e => setNumero(e.target.value)} */
+                                /* value={numero}
+                                onChange={e => setNumero(e.target.value)} */
                                 />
                             </Form.Group>
 
@@ -175,15 +191,15 @@ export default function FormCliente() {
                                     fluid
                                     label='Bairro'
                                     maxLength="100"
-                                    /* value={bairro}
-                                    onChange={e => setBairro(e.target.value)} */
+                                /* value={bairro}
+                                onChange={e => setBairro(e.target.value)} */
                                 />
                                 <Form.Input
                                     required
                                     fluid
                                     label='Cidade'
-                                    /* value={cidade}
-                                    onChange={e => setCidade(e.target.value)} */
+                                /* value={cidade}
+                                onChange={e => setCidade(e.target.value)} */
                                 />
                                 <Form.Input
                                     required
@@ -193,8 +209,8 @@ export default function FormCliente() {
                                     <InputMask
                                         required
                                         mask="99999-999"
-                                        /* value={cep}
-                                        onChange={e => setCep(e.target.value)} */
+                                    /* value={cep}
+                                    onChange={e => setCep(e.target.value)} */
                                     />
                                 </Form.Input>
                             </Form.Group>
@@ -205,17 +221,17 @@ export default function FormCliente() {
                                     label='UF'
                                     placeholder="Selecione"
                                     options={UFOptions}
-                                    /* value={estado}
-                                    //onChange={e => setUf(e.target.value)}
-                                    onChange={(e, { value }) => { setEstado(value) }} */
+                                /* value={estado}
+                                //onChange={e => setUf(e.target.value)}
+                                onChange={(e, { value }) => { setEstado(value) }} */
                                 />
                             </Form.Group>
                             <Form.Group widths='equal' style={{ marginTop: '4%' }}>
                                 <Form.Input
                                     fluid
                                     label='Complemento'
-                                    /* value={complemento}
-                                    onChange={e => setComplemento(e.target.value)} */
+                                /* value={complemento}
+                                onChange={e => setComplemento(e.target.value)} */
                                 />
                             </Form.Group>
 
