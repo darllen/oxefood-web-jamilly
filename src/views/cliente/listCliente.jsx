@@ -25,15 +25,14 @@ export default function ListCliente() {
     }
 
     function formatarData(dataParam) {
-        const data = dataParam.toString();
-
         if (dataParam === null || dataParam === '' || dataParam === undefined) {
-            return ''
+          return '';
         }
-
-        let arrayData = data.split('-');
+      
+        const data = dataParam.toString();
+        let arrayData = data.split(',');
         return arrayData[2] + '/' + arrayData[1] + '/' + arrayData[0];
-    }
+      }
 
     function confirmaRemover(id) {
         setOpenModal(true)
@@ -105,7 +104,7 @@ export default function ListCliente() {
                                         <Table.Cell>{formatarData(cliente.dataNascimento)}</Table.Cell>
                                         <Table.Cell>{cliente.foneCelular}</Table.Cell>
                                         <Table.Cell>{cliente.foneFixo}</Table.Cell>
-                                        <Table.Cell>{cliente.enderecos[0].cidade}</Table.Cell>
+                                        {/* <Table.Cell>{cliente.enderecos[0].cidade}</Table.Cell> */}
                                         <Table.Cell textAlign='center'>
 
                                             <Button

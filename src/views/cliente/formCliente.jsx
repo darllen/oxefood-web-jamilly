@@ -92,12 +92,11 @@ export default function FormCliente() {
     }
 
     function formatarData(dataParam) {
-        const data = dataParam.toString();
-
         if (dataParam === null || dataParam === '' || dataParam === undefined) {
-            return ''
+            return '';
         }
 
+        const data = dataParam.toString();
         let arrayData = data.split(',');
         return arrayData[2] + '/' + arrayData[1] + '/' + arrayData[0];
     }
