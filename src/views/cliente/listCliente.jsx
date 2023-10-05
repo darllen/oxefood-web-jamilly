@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, Container, Divider, Header, Icon, Modal, Table } from 'semantic-ui-react';
+import { Button, Container, Divider, Header, Icon, Modal, Table, Segment, Menu, Form, FormGroup } from 'semantic-ui-react';
 import MenuSistema from '../../menuSistema';
 
 export default function ListCliente() {
@@ -11,6 +11,10 @@ export default function ListCliente() {
     const [lista, setLista] = useState([]);
     const [openModal, setOpenModal] = useState(false);
     const [idRemover, setIdRemover] = useState();
+    const [menuFiltro, setMenuFiltro] = useState();
+
+    const [nome, setNome] = useState();
+    const [cpf, setCpf] = useState();
 
 
     useEffect(() => {
@@ -26,13 +30,13 @@ export default function ListCliente() {
 
     function formatarData(dataParam) {
         if (dataParam === null || dataParam === '' || dataParam === undefined) {
-          return '';
+            return '';
         }
-      
+
         const data = dataParam.toString();
         let arrayData = data.split(',');
         return arrayData[2] + '/' + arrayData[1] + '/' + arrayData[0];
-      }
+    }
 
     function confirmaRemover(id) {
         setOpenModal(true)
@@ -57,6 +61,42 @@ export default function ListCliente() {
         setOpenModal(false)
     }
 
+    function handleMenuFiltro() {
+        if (menuFiltro === true) {
+            setMenuFiltro(false);
+        } else {
+            setMenuFiltro(true);
+        }
+    }
+
+    function handleChangeNome(value) {
+        filtrarClientes(value, nome);
+    }
+
+    function handleChangeCpf(value) {
+        filtrarClientes(cpf, value);
+    }
+
+    async function filtrarClientes(nomeParam, cpfParam) {
+
+        let formData = new FormData();
+
+        if (nomeParam !== undefined) {
+            setNome(nomeParam)
+            formData.append('nome', nomeParam);
+        }
+        if (cpfParam !== undefined) {
+            setCpf(cpfParam)
+            formData.append('cpf', cpfParam);
+        }
+
+        await axios.post("http://localhost:8080/api/produto/filtrar", formData)
+            .then((response) => {
+                setLista(response.data)
+            })
+    }
+
+
 
     return (
         <div>
@@ -69,6 +109,18 @@ export default function ListCliente() {
                     <Divider />
 
                     <div style={{ marginTop: '4%' }}>
+
+                        <Menu compact>
+                            <Menu.Item
+                                name='menuFiltro'
+                                active={menuFiltro === true}
+                                onClick={() => handleMenuFiltro()}
+                            >
+                                <Icon name='filter' />
+                                Filtrar
+                            </Menu.Item>
+                        </Menu>
+
                         <Button
                             label='Novo'
                             circular
@@ -78,6 +130,35 @@ export default function ListCliente() {
                             as={Link}
                             to='/form-cliente'
                         />
+
+                        {menuFiltro ?
+                            <Segment>
+                                <Form>
+                                    <FormGroup className="form-filtros">
+                                        <Form.Input
+                                            icon="search"
+                                            value={nome}
+                                            onChange={e => handleChangeNome(e.target.value)}
+                                            label='Nome'
+                                            placeholder='Filtrar por Nome do Cliente'
+                                            labelPosition='left'
+                                            width={4}
+                                        />
+
+                                        <Form.Input
+                                            icon="search"
+                                            value={cpf}
+                                            onChange={e => handleChangeCpf(e.target.value)}
+                                            label='CPF'
+                                            placeholder='Filtrar por CPF'
+                                            labelPosition='left'
+                                        />
+                                    </FormGroup>
+                                </Form>
+
+                            </Segment> : ""
+                        }
+
                         <br /><br /><br />
 
                         <Table color='orange' sortable celled>
