@@ -13,6 +13,7 @@ export default function ListProduto() {
     const [lista, setLista] = useState([]);
     const [openModal, setOpenModal] = useState(false);
     const [idRemover, setIdRemover] = useState();
+
     const [menuFiltro, setMenuFiltro] = useState();
     const [codigo, setCodigo] = useState();
     const [titulo, setTitulo] = useState();
@@ -31,7 +32,7 @@ export default function ListProduto() {
                 setLista(response.data)
             })
 
-        axios.get("http://localhost:8080/api/produto/categoria")
+        axios.get(ENDERECO_API + "categoria")
             .then((response) => {
 
                 const dropDownCategorias = [];
@@ -69,8 +70,8 @@ export default function ListProduto() {
                         setLista(response.data)
                     })
             })
-            .catch((error) => { error.response ? notifyError(error.response.data.errors[0].defaultMessage) : notifyError(mensagemErro);})
-            
+            .catch((error) => { error.response ? notifyError(error.response.data.errors[0].defaultMessage) : notifyError(mensagemErro); })
+
         setOpenModal(false)
     }
 
@@ -111,7 +112,7 @@ export default function ListProduto() {
             formData.append('idCategoria', idCategoriaParam);
         }
 
-        await axios.post("http://localhost:8080/api/produto/filtrar", formData)
+        await axios.post(ENDERECO_API + "filtrar", formData)
             .then((response) => {
                 setLista(response.data)
             })
@@ -139,6 +140,7 @@ export default function ListProduto() {
                                 Filtrar
                             </Menu.Item>
                         </Menu>
+
 
                         <Button
                             label='Novo'
@@ -187,6 +189,7 @@ export default function ListProduto() {
                                 </Form>
                             </Segment> : ""
                         }
+
 
                         <br /><br /><br />
 
