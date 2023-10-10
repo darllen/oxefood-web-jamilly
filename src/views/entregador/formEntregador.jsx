@@ -129,15 +129,23 @@ export default function FormEntregador() {
     }
 
     function formatarData(dataParam) {
-        const data = dataParam.toString();
-
         if (dataParam === null || dataParam === '' || dataParam === undefined) {
-            return ''
+            return '';
         }
 
+        const data = dataParam.toString();
         let arrayData = data.split(',');
-        return arrayData[2] + '/' + arrayData[1] + '/' + arrayData[0];
+        let arrayDataFormatada = [];
+
+        arrayData.forEach((str) => {
+            if (str.length === 1){
+                str = '0' + str;
+            }
+            arrayDataFormatada.push(str)
+          });
+        return arrayDataFormatada[2] + '/' + arrayDataFormatada[1] + '/' + arrayDataFormatada[0];
     }
+
 
     return (
         <div>
@@ -201,7 +209,7 @@ export default function FormEntregador() {
                                         required
                                         mask="99/99/9999"
                                         placeholder="Ex: 20/03/1985"
-                                        value={dataNascimento}
+                                        value={formatarData(dataNascimento)}
                                         onChange={e => setDataNascimento(e.target.value)}
                                     />
                                 </Form.Input>
