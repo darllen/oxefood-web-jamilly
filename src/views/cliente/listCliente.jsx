@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import InputMask from 'react-input-mask';
 import { Button, Container, Divider, Header, Icon, Modal, Table, Segment, Menu, Form, FormGroup } from 'semantic-ui-react';
 import MenuSistema from '../../menuSistema';
 import { mensagemErro, notifyError, notifySuccess } from '../../views/util/Util';
@@ -12,8 +13,8 @@ export default function ListCliente() {
     const [lista, setLista] = useState([]);
     const [openModal, setOpenModal] = useState(false);
     const [idRemover, setIdRemover] = useState();
-    const [menuFiltro, setMenuFiltro] = useState();
 
+    const [menuFiltro, setMenuFiltro] = useState();
     const [nome, setNome] = useState();
     const [cpf, setCpf] = useState();
 
@@ -73,11 +74,11 @@ export default function ListCliente() {
     }
 
     function handleChangeNome(value) {
-        filtrarClientes(value, nome);
+        filtrarClientes(value, cpf);
     }
 
     function handleChangeCpf(value) {
-        filtrarClientes(cpf, value);
+        filtrarClientes(nome, value);
     }
 
     async function filtrarClientes(nomeParam, cpfParam) {
@@ -93,7 +94,7 @@ export default function ListCliente() {
             formData.append('cpf', cpfParam);
         }
 
-        await axios.post("http://localhost:8080/api/produto/filtrar", formData)
+        await axios.post(ENDERECO_API + "filtrar", formData)
             .then((response) => {
                 setLista(response.data)
             })
@@ -146,16 +147,21 @@ export default function ListCliente() {
                                             placeholder='Filtrar por Nome do Cliente'
                                             labelPosition='left'
                                             width={4}
-                                        />
+                                            />
 
                                         <Form.Input
                                             icon="search"
                                             value={cpf}
                                             onChange={e => handleChangeCpf(e.target.value)}
                                             label='CPF'
-                                            placeholder='Filtrar por CPF'
-                                            labelPosition='left'
-                                        />
+                                            labelPosition='left' >
+                                            <InputMask
+                                                required
+                                                mask="999.999.999-99"
+                                                onChange={e => setCpf(e.target.value)}
+                                                placeholder='Filtrar por CPF'
+                                            />
+                                        </Form.Input>
                                     </FormGroup>
                                 </Form>
 

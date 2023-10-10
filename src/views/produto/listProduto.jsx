@@ -21,7 +21,6 @@ export default function ListProduto() {
     const [listaCategoriaProduto, setListaCategoriaProduto] = useState([]);
 
 
-
     useEffect(() => {
         carregarLista();
     }, [])
