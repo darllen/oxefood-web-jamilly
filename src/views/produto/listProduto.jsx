@@ -1,8 +1,9 @@
 import axios from 'axios';
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, Container, Divider, Icon, Table, Modal, Header } from 'semantic-ui-react';
+import { Button, Container, Divider, Icon, Table, Modal, Header, Segment, Menu, Form } from 'semantic-ui-react';
 import MenuSistema from '../../menuSistema';
+import { mensagemErro, notifyError, notifySuccess } from '../../views/util/Util';
 
 
 export default function ListProduto() {
@@ -12,6 +13,12 @@ export default function ListProduto() {
     const [lista, setLista] = useState([]);
     const [openModal, setOpenModal] = useState(false);
     const [idRemover, setIdRemover] = useState();
+
+    const [menuFiltro, setMenuFiltro] = useState();
+    const [codigo, setCodigo] = useState();
+    const [titulo, setTitulo] = useState();
+    const [idCategoria, setIdCategoria] = useState();
+    const [listaCategoriaProduto, setListaCategoriaProduto] = useState([]);
 
 
     useEffect(() => {
@@ -23,6 +30,20 @@ export default function ListProduto() {
             .then((response) => {
                 setLista(response.data)
             })
+
+        axios.get(ENDERECO_API + "categoria")
+            .then((response) => {
+
+                const dropDownCategorias = [];
+                dropDownCategorias.push({ text: '', value: '' });
+                response.data.map(c => (
+                    dropDownCategorias.push({ text: c.descricao, value: c.id })
+                ))
+
+                setListaCategoriaProduto(dropDownCategorias)
+
+            })
+
     }
 
     function formatarMoeda(dataParam) {
@@ -41,19 +62,62 @@ export default function ListProduto() {
         await axios.delete(ENDERECO_API + idRemover)
             .then((response) => {
 
-                console.log('Produto removido com sucesso.')
+                notifySuccess('Produto removido com sucesso.')
 
                 axios.get(ENDERECO_API)
                     .then((response) => {
                         setLista(response.data)
                     })
             })
-            .catch((error) => {
-                console.log('Erro ao remover um produto.')
-            })
+            .catch((error) => { error.response ? notifyError(error.response.data.errors[0].defaultMessage) : notifyError(mensagemErro); })
+
         setOpenModal(false)
     }
-    
+
+    function handleMenuFiltro() {
+        if (menuFiltro === true) {
+            setMenuFiltro(false);
+        } else {
+            setMenuFiltro(true);
+        }
+    }
+
+    function handleChangeCodigo(value) {
+        filtrarProdutos(value, titulo, idCategoria);
+    }
+
+    function handleChangeTitulo(value) {
+        filtrarProdutos(codigo, value, idCategoria);
+    }
+
+    function handleChangeCategoriaProduto(value) {
+        filtrarProdutos(codigo, titulo, value);
+    }
+
+    async function filtrarProdutos(codigoParam, tituloParam, idCategoriaParam) {
+
+        let formData = new FormData();
+
+        if (codigoParam !== undefined) {
+            setCodigo(codigoParam)
+            formData.append('codigo', codigoParam);
+        }
+        if (tituloParam !== undefined) {
+            setTitulo(tituloParam)
+            formData.append('titulo', tituloParam);
+        }
+        if (idCategoriaParam !== undefined) {
+            setIdCategoria(idCategoriaParam)
+            formData.append('idCategoria', idCategoriaParam);
+        }
+
+        await axios.post(ENDERECO_API + "filtrar", formData)
+            .then((response) => {
+                setLista(response.data)
+            })
+    }
+
+
     return (
         <div>
             <MenuSistema />
@@ -64,6 +128,19 @@ export default function ListProduto() {
                     <Divider />
 
                     <div style={{ marginTop: '4%' }}>
+
+                        <Menu compact>
+                            <Menu.Item
+                                name='menuFiltro'
+                                active={menuFiltro === true}
+                                onClick={() => handleMenuFiltro()}
+                            >
+                                <Icon name='filter' />
+                                Filtrar
+                            </Menu.Item>
+                        </Menu>
+
+
                         <Button
                             label='Novo'
                             circular
@@ -73,6 +150,46 @@ export default function ListProduto() {
                             as={Link}
                             to='/form-produto'
                         />
+
+                        {menuFiltro ?
+
+                            <Segment>
+                                <Form className="form-filtros">
+
+                                    <Form.Input
+                                        icon="search"
+                                        value={codigo}
+                                        onChange={e => handleChangeCodigo(e.target.value)}
+                                        label='Código do Produto'
+                                        placeholder='Filtrar por Código do Produto'
+                                        labelPosition='left'
+                                        width={4}
+                                    />
+                                    <Form.Group widths='equal'>
+                                        <Form.Input
+                                            icon="search"
+                                            value={titulo}
+                                            onChange={e => handleChangeTitulo(e.target.value)}
+                                            label='Título'
+                                            placeholder='Filtrar por título'
+                                            labelPosition='left'
+                                        />
+                                        <Form.Select
+                                            placeholder='Filtrar por Categoria'
+                                            label='Categoria'
+                                            options={listaCategoriaProduto}
+                                            value={idCategoria}
+                                            onChange={(e, { value }) => {
+                                                handleChangeCategoriaProduto(value)
+                                            }}
+                                        />
+
+                                    </Form.Group>
+                                </Form>
+                            </Segment> : ""
+                        }
+
+
                         <br /><br /><br />
 
                         <Table color='orange' sortable celled>

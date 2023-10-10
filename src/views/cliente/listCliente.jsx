@@ -1,8 +1,10 @@
 import axios from 'axios';
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, Container, Divider, Header, Icon, Modal, Table } from 'semantic-ui-react';
+import InputMask from 'react-input-mask';
+import { Button, Container, Divider, Header, Icon, Modal, Table, Segment, Menu, Form, FormGroup } from 'semantic-ui-react';
 import MenuSistema from '../../menuSistema';
+import { mensagemErro, notifyError, notifySuccess } from '../../views/util/Util';
 
 export default function ListCliente() {
 
@@ -11,6 +13,10 @@ export default function ListCliente() {
     const [lista, setLista] = useState([]);
     const [openModal, setOpenModal] = useState(false);
     const [idRemover, setIdRemover] = useState();
+
+    const [menuFiltro, setMenuFiltro] = useState();
+    const [nome, setNome] = useState();
+    const [cpf, setCpf] = useState();
 
 
     useEffect(() => {
@@ -26,13 +32,13 @@ export default function ListCliente() {
 
     function formatarData(dataParam) {
         if (dataParam === null || dataParam === '' || dataParam === undefined) {
-          return '';
+            return '';
         }
-      
+
         const data = dataParam.toString();
         let arrayData = data.split(',');
         return arrayData[2] + '/' + arrayData[1] + '/' + arrayData[0];
-      }
+    }
 
     function confirmaRemover(id) {
         setOpenModal(true)
@@ -43,19 +49,57 @@ export default function ListCliente() {
 
         await axios.delete(ENDERECO_API + idRemover)
             .then((response) => {
-
-                console.log('Cliente removido com sucesso.')
-
+                notifySuccess('Cliente removido com sucesso.')
                 axios.get(ENDERECO_API)
                     .then((response) => {
                         setLista(response.data)
                     })
             })
             .catch((error) => {
-                console.log('Erro ao remover um cliente.')
+                if (error.response) {
+                    notifyError(error.response.data.errors[0].defaultMessage)
+                } else {
+                    notifyError(mensagemErro)
+                }
             })
         setOpenModal(false)
     }
+
+    function handleMenuFiltro() {
+        if (menuFiltro === true) {
+            setMenuFiltro(false);
+        } else {
+            setMenuFiltro(true);
+        }
+    }
+
+    function handleChangeNome(value) {
+        filtrarClientes(value, cpf);
+    }
+
+    function handleChangeCpf(value) {
+        filtrarClientes(nome, value);
+    }
+
+    async function filtrarClientes(nomeParam, cpfParam) {
+
+        let formData = new FormData();
+
+        if (nomeParam !== undefined) {
+            setNome(nomeParam)
+            formData.append('nome', nomeParam);
+        }
+        if (cpfParam !== undefined) {
+            setCpf(cpfParam)
+            formData.append('cpf', cpfParam);
+        }
+
+        await axios.post(ENDERECO_API + "filtrar", formData)
+            .then((response) => {
+                setLista(response.data)
+            })
+    }
+
 
 
     return (
@@ -69,6 +113,18 @@ export default function ListCliente() {
                     <Divider />
 
                     <div style={{ marginTop: '4%' }}>
+
+                        <Menu compact>
+                            <Menu.Item
+                                name='menuFiltro'
+                                active={menuFiltro === true}
+                                onClick={() => handleMenuFiltro()}
+                            >
+                                <Icon name='filter' />
+                                Filtrar
+                            </Menu.Item>
+                        </Menu>
+
                         <Button
                             label='Novo'
                             circular
@@ -78,6 +134,40 @@ export default function ListCliente() {
                             as={Link}
                             to='/form-cliente'
                         />
+
+                        {menuFiltro ?
+                            <Segment>
+                                <Form>
+                                    <FormGroup className="form-filtros">
+                                        <Form.Input
+                                            icon="search"
+                                            value={nome}
+                                            onChange={e => handleChangeNome(e.target.value)}
+                                            label='Nome'
+                                            placeholder='Filtrar por Nome do Cliente'
+                                            labelPosition='left'
+                                            width={4}
+                                            />
+
+                                        <Form.Input
+                                            icon="search"
+                                            value={cpf}
+                                            onChange={e => handleChangeCpf(e.target.value)}
+                                            label='CPF'
+                                            labelPosition='left' >
+                                            <InputMask
+                                                required
+                                                mask="999.999.999-99"
+                                                onChange={e => setCpf(e.target.value)}
+                                                placeholder='Filtrar por CPF'
+                                            />
+                                        </Form.Input>
+                                    </FormGroup>
+                                </Form>
+
+                            </Segment> : ""
+                        }
+
                         <br /><br /><br />
 
                         <Table color='orange' sortable celled>
@@ -89,7 +179,6 @@ export default function ListCliente() {
                                     <Table.HeaderCell>Data de Nascimento</Table.HeaderCell>
                                     <Table.HeaderCell>Fone Celular</Table.HeaderCell>
                                     <Table.HeaderCell>Fone Fixo</Table.HeaderCell>
-                                    <Table.HeaderCell>Cidade</Table.HeaderCell>
                                     <Table.HeaderCell textAlign='center'>Ações</Table.HeaderCell>
                                 </Table.Row>
                             </Table.Header>
@@ -104,7 +193,6 @@ export default function ListCliente() {
                                         <Table.Cell>{formatarData(cliente.dataNascimento)}</Table.Cell>
                                         <Table.Cell>{cliente.foneCelular}</Table.Cell>
                                         <Table.Cell>{cliente.foneFixo}</Table.Cell>
-                                        {/* <Table.Cell>{cliente.enderecos[0].cidade}</Table.Cell> */}
                                         <Table.Cell textAlign='center'>
 
                                             <Button

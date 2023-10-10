@@ -4,6 +4,7 @@ import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
 import { Link, useLocation } from "react-router-dom";
 import MenuSistema from '../../menuSistema';
 import axios from "axios";
+import { mensagemErro, notifyError, notifySuccess } from '../../views/util/Util';
 
 const UFOptions = [
     { key: 'ac', value: 'Acre', text: 'Acre' },
@@ -114,28 +115,37 @@ export default function FormEntregador() {
         if (idEntregador != null) { //Alteração:
 
             axios.put("http://localhost:8080/api/entregador/" + idEntregador, entregadorRequest)
-                .then((response) => { console.log('Entregador alterado com sucesso.') })
-                .catch((error) => { console.log('Erro ao alter um entregador.') })
+                .then((response) => { notifySuccess('Entregador alterado com sucesso.') })
+                .catch((error) => { error.response ? notifyError(error.response.data.errors[0].defaultMessage) : notifyError(mensagemErro);
+                })
 
         } else { //Cadastro:
 
             axios.post("http://localhost:8080/api/entregador", entregadorRequest)
-                .then((response) => { console.log('Entregador cadastrado com sucesso.') })
-                .catch((error) => { console.log('Erro ao incluir o entregador.') })
+                .then((response) => { notifySuccess('Entregador cadastrado com sucesso.') })
+                .catch((error) => { error.response ? notifyError(error.response.data.errors[0].defaultMessage) : notifyError(mensagemErro);})
         }
 
     }
 
     function formatarData(dataParam) {
-        const data = dataParam.toString();
-
         if (dataParam === null || dataParam === '' || dataParam === undefined) {
-            return ''
+            return '';
         }
 
+        const data = dataParam.toString();
         let arrayData = data.split(',');
-        return arrayData[2] + '/' + arrayData[1] + '/' + arrayData[0];
+        let arrayDataFormatada = [];
+
+        arrayData.forEach((str) => {
+            if (str.length === 1){
+                str = '0' + str;
+            }
+            arrayDataFormatada.push(str)
+          });
+        return arrayDataFormatada[2] + '/' + arrayDataFormatada[1] + '/' + arrayDataFormatada[0];
     }
+
 
     return (
         <div>
@@ -199,7 +209,7 @@ export default function FormEntregador() {
                                         required
                                         mask="99/99/9999"
                                         placeholder="Ex: 20/03/1985"
-                                        value={dataNascimento}
+                                        value={formatarData(dataNascimento)}
                                         onChange={e => setDataNascimento(e.target.value)}
                                     />
                                 </Form.Input>

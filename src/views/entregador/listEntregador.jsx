@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button, Container, Divider, Icon, Table, Modal, Header } from 'semantic-ui-react';
 import MenuSistema from '../../menuSistema';
+import { mensagemErro, notifyError, notifySuccess } from '../../views/util/Util';
 
 
 export default function ListEntregador() {
@@ -48,15 +49,15 @@ export default function ListEntregador() {
         await axios.delete(ENDERECO_API + idRemover)
         .then((response) => {
   
-            console.log('Entregador removido com sucesso.')
+            notifySuccess('Entregador removido com sucesso.')
   
             axios.get(ENDERECO_API)
             .then((response) => {
                 setLista(response.data)
             })
         })
-        .catch((error) => {
-            console.log('Erro ao remover um entregador.')
+        .catch((error) => { error.response ? notifyError(error.response.data.errors[0].defaultMessage) : notifyError(mensagemErro);
+
         })
         setOpenModal(false)
     }

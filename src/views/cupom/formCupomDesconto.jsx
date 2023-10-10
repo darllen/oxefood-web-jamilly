@@ -4,6 +4,7 @@ import InputMask from 'react-input-mask';
 import { Link, useLocation } from "react-router-dom";
 import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
 import MenuSistema from '../../menuSistema';
+import { mensagemErro, notifyError, notifySuccess } from '../../views/util/Util';
 
 export default function FormCupomDesconto(){
 
@@ -50,8 +51,14 @@ export default function FormCupomDesconto(){
         }
 
         axios.post( ENDERECO_API, cupomDescontoRequest)
-            .then((response) => { console.log('Entregador cadastrado com sucesso.') })
-            .catch((error) => { console.log('Erro ao incluir o entregador.') })
+            .then((response) => { notifySuccess('Cupom cadastrado com sucesso.') })
+            .catch((error) => { 
+                if (error.response) {
+                    notifyError(error.response.data.errors[0].defaultMessage)
+                } else {
+                    notifyError(mensagemErro)
+                }
+             })
     }
 
     function formatarData(dataParam) {
