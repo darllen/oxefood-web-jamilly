@@ -3,6 +3,7 @@ import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
 import { Link, useLocation } from "react-router-dom";
 import MenuSistema from '../../../menuSistema';
 import axios from "axios";
+import { mensagemErro, notifyError, notifySuccess } from '../../util/Util';
 
 export default function FormCategoriaProduto() {
 
@@ -33,13 +34,13 @@ export default function FormCategoriaProduto() {
         if (idCategoria === undefined) { //Cadastro:
 
             axios.post(ENDERECO_API, categoriaProdutoRequest)
-                .then((response) => { console.log('Categoria cadastrada com sucesso.') })
-                .catch((error) => { console.log('Erro ao incluir a categoria.') })
+                .then((response) => { notifySuccess('Categoria cadastrada com sucesso.') })
+                .catch((error) => { error.response ? notifyError(error.response.data.errors[0].defaultMessage) : notifyError(mensagemErro);})
 
         } else { //Alteração:
             axios.put(ENDERECO_API + idCategoria, categoriaProdutoRequest)
-                .then((response) => { console.log('Categoria alterada com sucesso.') })
-                .catch((error) => { console.log('Erro ao alterar uma categoria.') })
+                .then((response) => { notifySuccess('Categoria alterada com sucesso.') })
+                .catch((error) => { error.response ? notifyError(error.response.data.errors[0].defaultMessage) : notifyError(mensagemErro);})
         }
     }
 

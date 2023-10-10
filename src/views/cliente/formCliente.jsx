@@ -85,7 +85,15 @@ export default function FormCliente() {
 
         const data = dataParam.toString();
         let arrayData = data.split(',');
-        return arrayData[2] + '/' + arrayData[1] + '/' + arrayData[0];
+        let arrayDataFormatada = [];
+
+        arrayData.forEach((str) => {
+            if (str.length === 1){
+                str = '0' + str;
+            }
+            arrayDataFormatada.push(str)
+          });
+        return arrayDataFormatada[2] + '/' + arrayDataFormatada[1] + '/' + arrayDataFormatada[0];
     }
 
     return (
@@ -135,7 +143,7 @@ export default function FormCliente() {
                                     label='Fone Celular'
                                     width={6}>
                                     <InputMask
-                                        mask="(99) 9999.9999"
+                                        mask="(99) 9999-9999"
                                         value={foneCelular}
                                         onChange={e => setFoneCelular(e.target.value)}
                                     />
@@ -145,7 +153,7 @@ export default function FormCliente() {
                                     label='Fone Fixo'
                                     width={6}>
                                     <InputMask
-                                        mask="(99) 9999.9999"
+                                        mask="(99) 9999-9999"
                                         value={foneFixo}
                                         onChange={e => setFoneFixo(e.target.value)}
                                     />
@@ -159,7 +167,7 @@ export default function FormCliente() {
                                         mask="99/99/9999"
                                         maskChar={null}
                                         placeholder="Ex: 20/03/1985"
-                                        value={dataNascimento}
+                                        value={formatarData(dataNascimento)}
                                         onChange={e => setDataNascimento(e.target.value)}
                                     />
                                 </Form.Input>

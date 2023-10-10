@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button, Container, Divider, Icon, Table, Modal, Header, Segment, Menu, Form } from 'semantic-ui-react';
 import MenuSistema from '../../menuSistema';
+import { mensagemErro, notifyError, notifySuccess } from '../../views/util/Util';
 
 
 export default function ListProduto() {
@@ -61,16 +62,15 @@ export default function ListProduto() {
         await axios.delete(ENDERECO_API + idRemover)
             .then((response) => {
 
-                console.log('Produto removido com sucesso.')
+                notifySuccess('Produto removido com sucesso.')
 
                 axios.get(ENDERECO_API)
                     .then((response) => {
                         setLista(response.data)
                     })
             })
-            .catch((error) => {
-                console.log('Erro ao remover um produto.')
-            })
+            .catch((error) => { error.response ? notifyError(error.response.data.errors[0].defaultMessage) : notifyError(mensagemErro);})
+            
         setOpenModal(false)
     }
 

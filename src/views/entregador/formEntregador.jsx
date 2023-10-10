@@ -4,6 +4,7 @@ import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
 import { Link, useLocation } from "react-router-dom";
 import MenuSistema from '../../menuSistema';
 import axios from "axios";
+import { mensagemErro, notifyError, notifySuccess } from '../../views/util/Util';
 
 const UFOptions = [
     { key: 'ac', value: 'Acre', text: 'Acre' },
@@ -114,14 +115,15 @@ export default function FormEntregador() {
         if (idEntregador != null) { //Alteração:
 
             axios.put("http://localhost:8080/api/entregador/" + idEntregador, entregadorRequest)
-                .then((response) => { console.log('Entregador alterado com sucesso.') })
-                .catch((error) => { console.log('Erro ao alter um entregador.') })
+                .then((response) => { notifySuccess('Entregador alterado com sucesso.') })
+                .catch((error) => { error.response ? notifyError(error.response.data.errors[0].defaultMessage) : notifyError(mensagemErro);
+                })
 
         } else { //Cadastro:
 
             axios.post("http://localhost:8080/api/entregador", entregadorRequest)
-                .then((response) => { console.log('Entregador cadastrado com sucesso.') })
-                .catch((error) => { console.log('Erro ao incluir o entregador.') })
+                .then((response) => { notifySuccess('Entregador cadastrado com sucesso.') })
+                .catch((error) => { error.response ? notifyError(error.response.data.errors[0].defaultMessage) : notifyError(mensagemErro);})
         }
 
     }

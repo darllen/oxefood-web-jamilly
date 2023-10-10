@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button, Container, Divider, Header, Icon, Modal, Table, Segment, Menu, Form, FormGroup } from 'semantic-ui-react';
 import MenuSistema from '../../menuSistema';
+import { mensagemErro, notifyError, notifySuccess } from '../../views/util/Util';
 
 export default function ListCliente() {
 
@@ -47,16 +48,18 @@ export default function ListCliente() {
 
         await axios.delete(ENDERECO_API + idRemover)
             .then((response) => {
-
-                console.log('Cliente removido com sucesso.')
-
+                notifySuccess('Cliente removido com sucesso.')
                 axios.get(ENDERECO_API)
                     .then((response) => {
                         setLista(response.data)
                     })
             })
             .catch((error) => {
-                console.log('Erro ao remover um cliente.')
+                if (error.response) {
+                    notifyError(error.response.data.errors[0].defaultMessage)
+                } else {
+                    notifyError(mensagemErro)
+                }
             })
         setOpenModal(false)
     }
