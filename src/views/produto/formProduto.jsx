@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import InputMask from 'react-input-mask';
 import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
 import { Link, useLocation } from "react-router-dom";
 import MenuSistema from '../../menuSistema';
@@ -7,7 +6,7 @@ import axios from "axios";
 
 export default function FormProduto() {
 
-    const ENDERECO_API = 'http://localhost:8080/api/produto';
+    const ENDERECO_API = 'http://localhost:8080/api/produto/';
 
     const { state } = useLocation();
 
@@ -18,26 +17,39 @@ export default function FormProduto() {
     const [valorUnitario, setValorUnitario] = useState();
     const [tempoEntregaMin, setTempoEntregaMin] = useState();
     const [tempoEntregaMax, setTempoEntregaMax] = useState();
+    const [listaCategoria, setListaCategoria] = useState([]);
+    const [idCategoria, setIdCategoria] = useState();
+
 
     useEffect(() => {
-        if (state != null && state.id != null) {
+        if (state !== null && state.id !== null) {
+
             axios.get(ENDERECO_API + state.id)
                 .then((response) => {
                     setIdProduto(response.data.id)
                     setTitulo(response.data.titulo)
                     setCodigo(response.data.codigo)
                     setDescricao(response.data.descricao)
-                    setValorUnitario(formatarMoeda(response.data.valorUnitario))
+                    setValorUnitario(response.data.valorUnitario)
                     setTempoEntregaMin(response.data.tempoEntregaMin)
                     setTempoEntregaMax(response.data.tempoEntregaMax)
+                    setIdCategoria(response.data.categoria.id)
                 })
         }
+
+        axios.get(ENDERECO_API + "categoria/")
+            .then((response) => {
+                const dropDownCategorias = response.data.map(c => ({ text: c.descricao, value: c.id }));
+                setListaCategoria(dropDownCategorias);
+            })
+
     }, [state])
 
 
     function salvar() {
 
         let produtoRequest = {
+            idCategoria: idCategoria,
             titulo: titulo,
             codigo: codigo,
             descricao: descricao,
@@ -46,31 +58,19 @@ export default function FormProduto() {
             tempoEntregaMax: tempoEntregaMax
         }
 
-        if (idProduto != null) { //Alteração:
-
-            axios.put(ENDERECO_API + idProduto, produtoRequest)
-                .then((response) => { console.log('produto alterado com sucesso.') })
-                .catch((error) => { console.log('Erro ao alter um produto.') })
-
-        } else { //Cadastro:
+        if (idProduto === undefined) { //Cadastro:
 
             axios.post(ENDERECO_API, produtoRequest)
-                .then((response) => { console.log('produto cadastrado com sucesso.') })
+                .then((response) => { console.log('Produto cadastrado com sucesso.') })
                 .catch((error) => { console.log('Erro ao incluir o produto.') })
+
+        } else { //Alteração:
+            axios.put(ENDERECO_API + idProduto, produtoRequest)
+                .then((response) => { console.log('Produto alterado com sucesso.') })
+                .catch((error) => { console.log('Erro ao alterar um produto.') })
+
         }
-        axios.post(ENDERECO_API, produtoRequest)
-            .then((response) => {
-                console.log('Produto cadastrado com sucesso.')
-            })
-            .catch((error) => {
-                console.log('Erro ao incluir o um produto.')
-            })
-    }
 
-    function formatarMoeda(dataParam) {
-        if (dataParam === null || dataParam === '' || dataParam === undefined || dataParam === 0) { return '' }
-
-        return dataParam.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
 
@@ -81,7 +81,14 @@ export default function FormProduto() {
 
                 <Container textAlign='justified' >
 
-                    <h2> <span style={{ color: 'darkgray' }}> Produto &nbsp;<Icon name='angle double right' size="small" /> </span> Cadastro </h2>
+
+                    {idProduto === undefined &&
+                        <h2> <span style={{ color: 'darkgray' }}> Produto &nbsp;<Icon name='angle double right' size="small" /> </span> Cadastro</h2>
+                    }
+                    {idProduto !== undefined &&
+                        <h2> <span style={{ color: 'darkgray' }}> Produto &nbsp;<Icon name='angle double right' size="small" /> </span> Alteração</h2>
+                    }
+
 
                     <Divider />
 
@@ -107,7 +114,21 @@ export default function FormProduto() {
                                     onChange={e => setCodigo(e.target.value)}>
                                 </Form.Input>
                             </Form.Group>
+                            <Form.Group widths='equal' style={{ marginTop: '4%' }}>
+                                <Form.Select
+                                    required
+                                    fluid
+                                    tabIndex='3'
+                                    placeholder='Selecione'
+                                    label='Categoria'
+                                    options={listaCategoria}
+                                    value={idCategoria}
+                                    onChange={(e, { value }) => {
+                                        setIdCategoria(value)
+                                    }}
+                                />
 
+                            </Form.Group>
                             <Form.Group widths='equal' style={{ marginTop: '4%' }}>
                                 <Form.TextArea
                                     required
@@ -161,7 +182,7 @@ export default function FormProduto() {
                                 color='orange'
                             >
                                 <Icon name='reply' />
-                                Voltar
+                                <Link to={'/list-produto'}>Voltar</Link>
                             </Button>
 
                             <Button
@@ -171,10 +192,9 @@ export default function FormProduto() {
                                 labelPosition='left'
                                 color='blue'
                                 floated='right'
-                                onClick={() => salvar()}
-                            >
+                                onClick={() => salvar()} >
                                 <Icon name='save' />
-                                Salvar
+                                <Link to={'/list-produto'}>Salvar</Link>
                             </Button>
                         </div>
                     </div>

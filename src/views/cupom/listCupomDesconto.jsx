@@ -4,15 +4,13 @@ import { Link } from "react-router-dom";
 import { Button, Container, Divider, Icon, Table, Modal, Header } from 'semantic-ui-react';
 import MenuSistema from '../../menuSistema';
 
+export default function ListCupomDesconto() { 
 
-export default function ListEntregador() {
-
-    const ENDERECO_API = 'http://localhost:8080/api/entregador/';
+    const ENDERECO_API = 'http://localhost:8080/api/cupom/';
 
     const [lista, setLista] = useState([]);
     const [openModal, setOpenModal] = useState(false);
     const [idRemover, setIdRemover] = useState();
-
 
     useEffect(() => {
         carregarLista();
@@ -27,7 +25,6 @@ export default function ListEntregador() {
     }
 
     function formatarData(dataParam) {
-
         const data = dataParam.toString();
 
         if (dataParam === null || dataParam === '' || dataParam === undefined) {
@@ -36,6 +33,12 @@ export default function ListEntregador() {
 
         let arrayData = data.split(',');
         return arrayData[2] + '/' + arrayData[1] + '/' + arrayData[0];
+    }
+
+    function formatarMoeda(dataParam) {
+        if (dataParam === null || dataParam === '' || dataParam === undefined || dataParam === 0) { return '' }
+
+        return dataParam.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
     function confirmaRemover(id) {
@@ -48,7 +51,7 @@ export default function ListEntregador() {
         await axios.delete(ENDERECO_API + idRemover)
         .then((response) => {
   
-            console.log('Entregador removido com sucesso.')
+            console.log('Cupom removido com sucesso.')
   
             axios.get(ENDERECO_API)
             .then((response) => {
@@ -56,21 +59,17 @@ export default function ListEntregador() {
             })
         })
         .catch((error) => {
-            console.log('Erro ao remover um entregador.')
+            console.log('Erro ao remover um cupom.')
         })
         setOpenModal(false)
     }
- 
- 
 
     return (
         <div>
             <MenuSistema />
             <div style={{ marginTop: '3%' }}>
-
                 <Container textAlign='justified' >
-
-                    <h2> Entregador </h2>
+                    <h2> Cupom de Desconto </h2>
                     <Divider />
 
                     <div style={{ marginTop: '4%' }}>
@@ -81,62 +80,53 @@ export default function ListEntregador() {
                             icon='clipboard outline'
                             floated='right'
                             as={Link}
-                            to='/form-entregador'
+                            to='/form-cupom'
                         />
                         <br /><br /><br />
 
                         <Table color='orange' sortable celled>
-
                             <Table.Header>
                                 <Table.Row>
-                                    <Table.HeaderCell>Nome</Table.HeaderCell>
-                                    <Table.HeaderCell>CPF</Table.HeaderCell>
-                                    <Table.HeaderCell>Data de Nascimento</Table.HeaderCell>
-                                    <Table.HeaderCell>Fone Celular</Table.HeaderCell>
-                                    <Table.HeaderCell>Fone Fixo</Table.HeaderCell>
+                                    <Table.HeaderCell>Código</Table.HeaderCell>
+                                    <Table.HeaderCell>% Desconto</Table.HeaderCell>
+                                    <Table.HeaderCell>Valor Desconto</Table.HeaderCell>
+                                    <Table.HeaderCell>Valor Min Pedido</Table.HeaderCell>
+                                    <Table.HeaderCell>Máx Uso por Cliente</Table.HeaderCell>
+                                    <Table.HeaderCell>Início da Vigência</Table.HeaderCell>
+                                    <Table.HeaderCell>Fim da Vigência</Table.HeaderCell>
                                     <Table.HeaderCell textAlign='center'>Ações</Table.HeaderCell>
                                 </Table.Row>
                             </Table.Header>
 
                             <Table.Body>
 
-                                {lista.map(entregador => (
+                                {lista.map(cupom => (
 
-                                    <Table.Row key={entregador.id}>
-                                        <Table.Cell>{entregador.nome}</Table.Cell>
-                                        <Table.Cell>{entregador.cpf}</Table.Cell>
-                                        <Table.Cell>{formatarData(entregador.dataNascimento)}</Table.Cell>
-                                        <Table.Cell>{entregador.foneCelular}</Table.Cell>
-                                        <Table.Cell>{entregador.foneFixo}</Table.Cell>
+                                    <Table.Row key={cupom.id}>
+                                        <Table.Cell>{cupom.codigoDesconto}</Table.Cell>
+                                        <Table.Cell>{cupom.percentualDesconto}%</Table.Cell>
+                                        <Table.Cell>{formatarMoeda(cupom.valorDesconto)}</Table.Cell>
+                                        <Table.Cell>{formatarMoeda(cupom.valorMinimoPedidoPermitido)}</Table.Cell>
+                                        <Table.Cell>{cupom.quantidadeMaximaUso}</Table.Cell>
+                                        <Table.Cell>{formatarData(cupom.inicioVigencia)}</Table.Cell>
+                                        <Table.Cell>{formatarData(cupom.fimVigencia)}</Table.Cell>
                                         <Table.Cell textAlign='center'>
-
-                                            <Button
-                                                inverted
-                                                circular
-                                                color='green'
-                                                title='Clique aqui para editar os dados deste entregador'
-                                                icon>
-                                                <Link to="/form-entregador" state={{ id: entregador.id }} style={{ color: 'green' }}> <Icon name='edit' /> </Link>
-                                            </Button> &nbsp;
                                             <Button
                                                 inverted
                                                 circular
                                                 color='red'
-                                                title='Clique aqui para remover este entregador'
+                                                title='Clique aqui para remover este cupom'
                                                 icon
-                                                onClick={e => confirmaRemover(entregador.id)}>
+                                                onClick={e => confirmaRemover(cupom.id)}>
                                                 <Icon name='trash' />
                                             </Button>
-
-
-
                                         </Table.Cell>
                                     </Table.Row>
                                 ))}
 
                             </Table.Body>
                         </Table>
-                    </div>
+                        </div>
                 </Container>
             </div>
 
@@ -159,7 +149,6 @@ export default function ListEntregador() {
                    </Button>
                </Modal.Actions>
          </Modal>
-
         </div>
-    )
+    );
 }

@@ -1,3 +1,4 @@
+import { mensagemErro, notifyError, notifySuccess } from '../../views/util/Util';
 import React, { useEffect, useState } from "react";
 import InputMask from 'react-input-mask';
 import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
@@ -6,11 +7,10 @@ import MenuSistema from '../../menuSistema';
 import axios from "axios";
 
 
+
 export default function FormCliente() {
 
     const ENDERECO_API = 'http://localhost:8080/api/cliente/';
-
-    const { state } = useLocation();
 
     const [idCliente, setIdCliente] = useState();
     const [nome, setNome] = useState();
@@ -19,6 +19,8 @@ export default function FormCliente() {
     const [foneCelular, setFoneCelular] = useState();
     const [foneFixo, setFoneFixo] = useState();
 
+    const { state } = useLocation();
+
     useEffect(() => {
 
         if (state != null && state.id != null) {
@@ -26,7 +28,6 @@ export default function FormCliente() {
             axios.get(ENDERECO_API + state.id)
 
                 .then((response) => {
-
                     setIdCliente(response.data.id)
                     setNome(response.data.nome)
                     setCpf(response.data.cpf)
@@ -51,25 +52,39 @@ export default function FormCliente() {
         if (idCliente != null) { //Alteração:
 
             axios.put(ENDERECO_API + idCliente, clienteRequest)
-                .then((response) => { console.log('Cliente alterado com sucesso.') })
-                .catch((error) => { console.log('Erro ao alter um cliente.') })
+                .then((response) => { notifySuccess('Cliente alterado com sucesso.') })
+                .catch((error) => {
+                    if (error.response) {
+                        notifyError(error.response.data.errors[0].defaultMessage)
+                    } else {
+                        notifyError(mensagemErro)
+                    }
+                })
 
         } else { //Cadastro:
 
             axios.post(ENDERECO_API, clienteRequest)
-                .then((response) => { console.log('Cliente cadastrado com sucesso.') })
-                .catch((error) => { console.log('Erro ao incluir o cliente.') })
+                .then((response) => {
+                    notifySuccess('Cliente cadastrado com sucesso.')
+                })
+                .catch((error) => {
+                    if (error.response) {
+                        notifyError(error.response.data.errors[0].defaultMessage)
+                    } else {
+                        notifyError(mensagemErro)
+                    }
+                })
         }
 
     }
 
     function formatarData(dataParam) {
-
         if (dataParam === null || dataParam === '' || dataParam === undefined) {
-            return ''
+            return '';
         }
 
-        let arrayData = dataParam.split('-');
+        const data = dataParam.toString();
+        let arrayData = data.split(',');
         return arrayData[2] + '/' + arrayData[1] + '/' + arrayData[0];
     }
 
@@ -91,11 +106,8 @@ export default function FormCliente() {
                     <Divider />
 
                     <div style={{ marginTop: '4%' }}>
-
                         <Form>
-
                             <Form.Group widths='equal'>
-
                                 <Form.Input
                                     required
                                     fluid
@@ -104,7 +116,6 @@ export default function FormCliente() {
                                     value={nome}
                                     onChange={e => setNome(e.target.value)}
                                 />
-
                                 <Form.Input
                                     required
                                     fluid
@@ -116,11 +127,9 @@ export default function FormCliente() {
                                         onChange={e => setCpf(e.target.value)}
                                     />
                                 </Form.Input>
-
                             </Form.Group>
 
                             <Form.Group>
-
                                 <Form.Input
                                     fluid
                                     label='Fone Celular'
@@ -131,7 +140,6 @@ export default function FormCliente() {
                                         onChange={e => setFoneCelular(e.target.value)}
                                     />
                                 </Form.Input>
-
                                 <Form.Input
                                     fluid
                                     label='Fone Fixo'
@@ -142,7 +150,6 @@ export default function FormCliente() {
                                         onChange={e => setFoneFixo(e.target.value)}
                                     />
                                 </Form.Input>
-
                                 <Form.Input
                                     fluid
                                     label='Data Nascimento'
@@ -156,7 +163,75 @@ export default function FormCliente() {
                                         onChange={e => setDataNascimento(e.target.value)}
                                     />
                                 </Form.Input>
+                            </Form.Group>
+                            <Form.Group widths='equal' style={{ marginTop: '4%' }}>
+                                <Form.Input
+                                    required
+                                    fluid
+                                    label='Rua'
+                                    maxLength="100"
+                                /* value={rua}
+                                onChange={e => setRua(e.target.value)} */
+                                />
+                                <Form.Input
+                                    required
+                                    fluid
+                                    label='Número'
+                                    maxLength="100"
+                                    width={4}
+                                /* value={numero}
+                                onChange={e => setNumero(e.target.value)} */
+                                />
+                            </Form.Group>
 
+                            <Form.Group widths='equal' style={{ marginTop: '4%' }}>
+                                <Form.Input
+                                    required
+                                    fluid
+                                    label='Bairro'
+                                    maxLength="100"
+                                /* value={bairro}
+                                onChange={e => setBairro(e.target.value)} */
+                                />
+                                <Form.Input
+                                    required
+                                    fluid
+                                    label='Cidade'
+                                /* value={cidade}
+                                onChange={e => setCidade(e.target.value)} */
+                                />
+                                <Form.Input
+                                    required
+                                    fluid
+                                    label='CEP'
+                                    width={5}>
+                                    <InputMask
+                                        required
+                                        mask="99999-999"
+                                    /* value={cep}
+                                    onChange={e => setCep(e.target.value)} */
+                                    />
+                                </Form.Input>
+                            </Form.Group>
+
+                            <Form.Group widths='equal' style={{ marginTop: '4%' }}>
+                                <Form.Select
+                                    fluid
+                                    label='UF'
+                                    placeholder="Selecione"
+                                    options={UFOptions}
+                                /* value={estado}
+                                //onChange={e => setUf(e.target.value)}
+                                onChange={(e, { value }) => { setEstado(value) }} */
+                                />
+                            </Form.Group>
+                            <Form.Group widths='equal' style={{ marginTop: '4%' }}>
+                                <Form.Input
+                                    fluid
+                                    label='Complemento'
+                                /* value={complemento}
+                                onChange={e => setComplemento(e.target.value)} */
+                                />
                             </Form.Group>
 
                         </Form>
@@ -185,7 +260,7 @@ export default function FormCliente() {
                                 onClick={() => salvar()}
                             >
                                 <Icon name='save' />
-                                Salvar
+                                <Link to={'/list-cliente'}>Salvar</Link>
                             </Button>
 
                         </div>
@@ -199,3 +274,33 @@ export default function FormCliente() {
     );
 
 }
+
+const UFOptions = [
+    { key: 'ac', value: 'Acre', text: 'Acre' },
+    { key: 'al', value: 'Alagoas', text: 'Alagoas' },
+    { key: 'ap', value: 'Amapá', text: 'Amapá' },
+    { key: 'am', value: 'Amazonas', text: 'Amazonas' },
+    { key: 'ba', value: 'Bahia', text: 'Bahia' },
+    { key: 'ce', value: 'Ceará', text: 'Ceará' },
+    { key: 'df', value: 'Distrito Federal', text: 'Distrito Federal' },
+    { key: 'es', value: 'Espírito Santo', text: 'Espírito Santo' },
+    { key: 'go', value: 'Goiás', text: 'Goiás' },
+    { key: 'ma', value: 'Maranhão', text: 'Maranhão' },
+    { key: 'mt', value: 'Mato Grosso', text: 'Mato Grosso' },
+    { key: 'ms', value: 'Mato Grosso do Sul', text: 'Mato Grosso do Sul' },
+    { key: 'mg', value: 'Minas Gerais', text: 'Minas Gerais' },
+    { key: 'pa', value: 'Pará', text: 'Pará' },
+    { key: 'pb', value: 'Paraíba', text: 'Paraíba' },
+    { key: 'pr', value: 'Paraná', text: 'Paraná' },
+    { key: 'pe', value: 'Pernambuco', text: 'Pernambuco' },
+    { key: 'pi', value: 'Piauí', text: 'Piauí' },
+    { key: 'rj', value: 'Rio de Janeiro', text: 'Rio de Janeiro' },
+    { key: 'rn', value: 'Rio Grande do Norte', text: 'Rio Grande do Norte' },
+    { key: 'rs', value: 'Rio Grande do Sul', text: 'Rio Grande do Sul' },
+    { key: 'ro', value: 'Rondônia', text: 'Rondônia' },
+    { key: 'rr', value: 'Roraima', text: 'Roraima' },
+    { key: 'sc', value: 'Santa Catarina', text: 'Santa Catarina' },
+    { key: 'sp', value: 'São Paulo', text: 'São Paulo' },
+    { key: 'se', value: 'Sergipe', text: 'Sergipe' },
+    { key: 'to', value: 'Tocantins', text: 'Tocantins' }
+];
